@@ -4,11 +4,12 @@ require 'fileutils'
 require 'set'
 
 
+DEBUG = True
 
-
+if DEBUG 
 puts ARGV[0]
 puts ARGV[1]
-
+end
 
 # changed the directory
 directory_url = ENV["userprofile"]+File::SEPARATOR+"solutions"
@@ -21,7 +22,9 @@ all_sol_files.map! {|file| file.split(".")[0] }
 downloaded_files = Set.new 
 downloaded_files.merge(all_sol_files)
 
+if DEBUG
 puts downloaded_files
+end
 
 all_problems = Hash.new
 user_name = ARGV[0].to_s
