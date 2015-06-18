@@ -5,7 +5,9 @@ require 'fileutils'
 puts ARGV[0]
 puts ARGV[1]
 
-directory_url = '/home/puneet/punsa'
+
+# changed the directory
+directory_url = ENV["userprofile"]+File::SEPARATOR+"solutions"
 FileUtils::mkdir_p directory_url
 
 all_problems = Hash.new
@@ -62,7 +64,15 @@ all_problems.each do |key,value|
 			url = "http://www.spoj.com/files/src/save/" + id.gsub(/\s+/, " ").strip
 			puts "Downloading #{key} problem solution..."
 			sol = agent.get(url)
-			File.open("#{directory_url}/#{key}.cpp", 'w') {|f| f.write(sol.body) }
+
+			#elaborated for better understanding 
+			filename = sol.header['content-disposition'].split("=")[1]
+			fileformat = filename.split(".")[1]
+			filename = key+"."+fileformat
+
+			#not all files are cpp
+			#got the file name from the header
+			File.open("#{directory_url}/#{filename}", 'w') {|f| f.write(sol.body) }
 			break
 		end
 	end
