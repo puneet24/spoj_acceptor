@@ -1,6 +1,10 @@
 require 'rubygems'
 require 'mechanize'
 require 'fileutils'
+require 'set'
+
+
+
 
 puts ARGV[0]
 puts ARGV[1]
@@ -9,6 +13,15 @@ puts ARGV[1]
 # changed the directory
 directory_url = ENV["userprofile"]+File::SEPARATOR+"solutions"
 FileUtils::mkdir_p directory_url
+
+all_sol_files = Dir.entries(directory_url)
+all_sol_files.map! {|file| file.split(".")[0] }
+
+#set for quick lookups
+downloaded_files = Set.new 
+downloaded_files.merge(all_sol_files)
+
+puts downloaded_files
 
 all_problems = Hash.new
 user_name = ARGV[0].to_s
@@ -53,6 +66,12 @@ problem_set.search("tr").each do |row|
 end
 
 all_problems.each do |key,value|
+	if downloaded_files.include?(key)
+		puts "already downloaded #{key} problem"
+		next
+	end
+	
+
 	w = 'http://www.spoj.com'+value
 	prob_page = agent.get(w)
 	list = prob_page.parser.css('table.problems.table.newstatus')[0]
