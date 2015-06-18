@@ -2,17 +2,18 @@ require 'rubygems'
 require 'mechanize'
 require 'fileutils'
 
-puts ARGV[0]
-puts ARGV[1]
-
-
 # changed the directory
-directory_url = ENV["userprofile"]+File::SEPARATOR+"solutions"
+directory_url = ENV["HOME"]+File::SEPARATOR+"solutions"
 FileUtils::mkdir_p directory_url
 
 all_problems = Hash.new
 user_name = ARGV[0].to_s
 password = ARGV[1].to_s
+
+if user_name.empty? || password.empty?
+	puts "Missing user_name or password."
+	exit
+end
 
 puts "Hello #{user_name}!"
 puts "Establishing connection with `www.spoj.com`."
@@ -25,7 +26,7 @@ if page.nil?
 	puts "Connection Failed."
 else
 	puts "Connection established."
-	puts "Starting downloading accepted solutions"
+	puts "Validating User name and password."
 end
 
 login_page = page.link_with(:text => ' sign in').click
@@ -34,9 +35,15 @@ my_page = login_page.form_with(:action => '/login/') do |f|
     f.login_user  = user_name
     f.password    = password
 end.click_button
- 
 
-my_account = my_page.link_with(:href => "/myaccount").click
+my_account = my_page.link_with(:href => "/myaccount")
+if my_account.nil?
+	puts "Invalid user_name or password. Try again with valid user_name and password."
+	exit
+else
+	puts "Validated user!! Started Downloading..."
+	my_account = my_account.click
+end
 
 problem_set = my_account.parser.css("table")[0]
 
@@ -65,13 +72,12 @@ all_problems.each do |key,value|
 			puts "Downloading #{key} problem solution..."
 			sol = agent.get(url)
 
-			#elaborated for better understanding 
+			# Final solution may have any extension. So extension is fetched here.
+			# Actual filename 
 			filename = sol.header['content-disposition'].split("=")[1]
-			fileformat = filename.split(".")[1]
-			filename = key+"."+fileformat
-
-			#not all files are cpp
-			#got the file name from the header
+			# Modified filename as per the problem name.
+			filename = key+File.extname(filename)
+			# Created file with the accepted code.
 			File.open("#{directory_url}/#{filename}", 'w') {|f| f.write(sol.body) }
 			break
 		end
@@ -79,4 +85,5 @@ all_problems.each do |key,value|
 	#puts prob_page.uri
 end
 
-puts count
+puts "Total number of classical problems solved :- #{count}."
+puts "Downloading Completed successfully at #{directory_url}."
