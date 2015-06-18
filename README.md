@@ -4,10 +4,21 @@ Utility to download all the accepted solutions of spoj by executing 1 command.
 The default storage is at **DefaultUser** directory in **solution** folder.
 <hr>
 
-##Usage
+##Requirements :-
+ruby >= 2.0.0
 <br>
-<pre>
-<code>
-ruby spoj_acceptor.rb "username" "password"
-</code>
-</pre>
+<hr>
+
+##Dependencies:-
+`mechanize` gem
+<br>
+`fileutils` gem
+<br>
+<hr>
+
+##Usage :- 
+1) Clone the repository.
+2) Move to `spoj_acceptor` folder in terminal.
+3) Then execute `ruby spoj_acceptor.rb @user_name @password`
+4) Download will start :)
+
