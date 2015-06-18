@@ -4,7 +4,7 @@ require 'fileutils'
 require 'set'
 
 
-DEBUG = True
+DEBUG = true
 
 if DEBUG 
 puts ARGV[0]
