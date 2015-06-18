@@ -39,6 +39,7 @@ page = agent.get('http://www.spoj.com/')
 
 if page.nil?
 	puts "Connection Failed."
+	exit
 else
 	puts "Connection established."
 	puts "Starting downloading accepted solutions"
@@ -58,6 +59,7 @@ problem_set = my_account.parser.css("table")[0]
 
 count = 0
 
+
 problem_set.search("tr").each do |row|
 	row.search("td").each do |col|
 		prob_name = col.search("a").text
@@ -68,6 +70,7 @@ problem_set.search("tr").each do |row|
 	end
 end
 
+begin
 all_problems.each do |key,value|
 	if downloaded_files.include?(key)
 		puts "already downloaded #{key} problem"
@@ -100,5 +103,10 @@ all_problems.each do |key,value|
 	end
 	#puts prob_page.uri
 end
+rescue SystemExit, Interrupt
+	puts "User aborted .. Exiting"
+	exit
+end
+
 
 puts count
