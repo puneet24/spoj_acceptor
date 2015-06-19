@@ -2,6 +2,8 @@ require "spoj_acceptor/version"
 require 'rubygems'
 require 'mechanize'
 require 'fileutils'
+require 'set'
+
 
 module SpojAcceptor
 
@@ -15,6 +17,12 @@ module SpojAcceptor
 			all_problems = Hash.new
 			user_name = ARGV[0].to_s
 			password = ARGV[1].to_s
+			all_sol_files = Dir.entries(directory_url)
+			all_sol_files.map! {|file| file.split(".")[0] }
+
+			#set for quick lookups
+			downloaded_files = Set.new 
+			downloaded_files.merge(all_sol_files)
 
 			if user_name.empty? || password.empty?
 				puts "Missing user_name or password."
@@ -66,6 +74,11 @@ module SpojAcceptor
 			end
 
 			all_problems.each do |key,value|
+
+				if downloaded_files.include?(key)
+					puts "Downloaded the #{key} problem"
+					next
+				end
 				w = 'http://www.spoj.com'+value
 				prob_page = agent.get(w)
 				list = prob_page.parser.css('table.problems.table.newstatus')[0]
