@@ -73,10 +73,16 @@ module SpojAcceptor
 				end
 			end
 
+			if !downloaded_files.empty?
+				puts "Already Downloaded Files..."
+				downloaded_files.map {|file| puts file}
+				puts "____________________________"
+				puts " "
+			end
+
 			all_problems.each do |key,value|
 
 				if downloaded_files.include?(key)
-					puts "Downloaded the #{key} problem"
 					next
 				end
 				w = 'http://www.spoj.com'+value
